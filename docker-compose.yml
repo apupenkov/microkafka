@@ -1,0 +1,107 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+    networks:
+      - network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    depends_on:
+      zookeeper:
+        condition: service_started
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    networks:
+      - network
+
+  microkafka-db:
+    container_name: microkafka-db
+    build: ./db
+    environment:
+      - PGUSER=postgres
+      - POSTGRES_PASSWORD=12345Kapitan_Farsh
+      - POSTGRES_DB=simplepay
+      - TEST_USER=TesterA
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - network
+    dns_search: .
+
+  microkafka-payment:
+    container_name: microkafka-payment
+    build:
+      context: .
+      dockerfile: microkafka-payment/Dockerfile
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: "wget --spider http://localhost:9090/actuator/health || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    depends_on:
+      microkafka-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: payment-created-event
+    networks:
+      - network
+    dns_search: .
+
+  microkafka-notification:
+    container_name: microkafka-notification
+    build:
+      context: .
+      dockerfile: microkafka-notification/Dockerfile
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: "wget --spider http://localhost:9000/actuator/health || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    depends_on:
+      microkafka-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: payment-created-event
+    networks:
+      - network
+    dns_search: .
+
+volumes:
+  pgdata:
+    external: true
+
+networks:
+  network:
+    driver: bridge
