@@ -2,7 +2,6 @@ package micro.qa.microkafka.api;
 
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
-import micro.qa.microkafka.api.AuthClient;
 import micro.qa.microkafka.api.context.CookieContext;
 import micro.qa.microkafka.api.context.SessionContext;
 import micro.qa.microkafka.api.util.OauthUtils;
