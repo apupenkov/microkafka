@@ -27,9 +27,9 @@ public class CreatePaymentKafkaTest extends BaseKafkaTest {
     void messageShouldBeProducedToKafkaAfterSuccessfulRegistration() throws Exception {
         PaymentJson paymentJson = new PaymentJson();
         paymentJson.setSum(new BigDecimal(100.00));
-        paymentJson.setUserId(UUID.randomUUID());
-        paymentJson.setOrderId(UUID.randomUUID());
-        paymentJson.setCreatedAt("18-09-2024T22:34:000");
+        paymentJson.setUserId(UUID.fromString("740273fe-790c-11ef-a4fb-0242ac120003"));
+        paymentJson.setOrderId(UUID.fromString("7402bc10-790c-11ef-a4fb-0242ac120003"));
+        paymentJson.setCreatedAt("2024-09-22 20:38:52");
 
         String paymentId = paymentClient.createPayment(paymentJson);
         System.out.println(paymentId);

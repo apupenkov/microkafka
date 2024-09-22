@@ -12,7 +12,7 @@ public class UserRepositoryImpl extends JpaService implements UserRepository {
     }
 
     @Override
-    public UserEntity findByUserId(UUID username) {
-        return entityManager.find(UserEntity.class, username);
+    public UserEntity findByIdInUsers(UUID uuid) {
+        return entityManager.find(UserEntity.class, uuid);
     }
 }

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface OrderRepository {
 
-    OrderEntity findOrderById(UUID uuid);
+    OrderEntity findByIdInOrder(UUID orderId);
 }

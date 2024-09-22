@@ -25,7 +25,7 @@ public class PaymentController {
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody PaymentJson paymentJson){
 
-        UUID paymentId;
+        String paymentId;
         try {
             paymentId = paymentService.create(paymentJson);
         } catch (Exception e) {

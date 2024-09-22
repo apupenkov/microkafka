@@ -1,9 +1,8 @@
 package micro.qa.microkafka.config.kafka;
 
-import micro.qa.microkafka.event.PaymentCreatedEvent;
+import micro.qa.microkafka.dto.PaymentJson;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -38,21 +37,20 @@ public class KafkaConfig {
     }
 
     @Bean
-    ProducerFactory<String, PaymentCreatedEvent> producerFactory(){
+    ProducerFactory<String, PaymentJson> producerFactory(){
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    KafkaTemplate<String, PaymentCreatedEvent> kafkaTemplate(){
+    KafkaTemplate<String, PaymentJson> kafkaTemplate(){
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
     NewTopic createTopic(){
         return TopicBuilder.name("payment-created-event-topic")
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(1)
+                .replicas(1)
                 .build();
     }
 }

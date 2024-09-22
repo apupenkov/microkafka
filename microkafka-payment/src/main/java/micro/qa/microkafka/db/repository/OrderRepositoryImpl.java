@@ -8,7 +8,7 @@ import java.util.UUID;
 public class OrderRepositoryImpl extends JpaService implements OrderRepository {
 
     @Override
-    public OrderEntity findOrderById(UUID uuid) {
+    public OrderEntity findByIdInOrder(UUID uuid) {
         return entityManager.find(OrderEntity.class, uuid);
     }
 }

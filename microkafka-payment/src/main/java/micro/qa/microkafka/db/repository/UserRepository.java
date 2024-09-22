@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface UserRepository {
 
-    UserEntity findByUserId(UUID username);
+    UserEntity findByIdInUsers(UUID userId);
 }

@@ -1,22 +1,24 @@
 package micro.qa.microkafka.db.model;
 
-
-import lombok.Data;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
 public class PaymentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
     private UUID id;
     @Column(nullable = false)
     private BigDecimal sum;
-    @Column(nullable = false)
-    private String createdAt;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
     @OneToOne
     @JoinColumn(name = "order_id")
     private OrderEntity order;
@@ -24,7 +26,6 @@ public class PaymentEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    // Геттеры и сеттеры
     public UUID getId() {
         return id;
     }
@@ -41,12 +42,12 @@ public class PaymentEntity {
         this.sum = sum;
     }
 
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = parseDate(createdAt);
     }
 
     public UserEntity getUser() {
@@ -63,5 +64,14 @@ public class PaymentEntity {
 
     public void setOrder(OrderEntity order) {
         this.order = order;
+    }
+
+    private Timestamp parseDate(String date) {
+        final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return new Timestamp(DATE_TIME_FORMAT.parse(date).getTime());
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }
