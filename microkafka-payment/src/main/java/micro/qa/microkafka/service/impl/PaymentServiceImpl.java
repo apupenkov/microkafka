@@ -28,44 +28,30 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String create(PaymentJson paymentJson) throws ExecutionException, InterruptedException {
+        PaymentJson paymentEvent = null;
 
-        UserEntity userEntity = userRepository.findByIdInUsers(paymentJson.getUserId());
-        System.out.println(userEntity.getUsername() + ": " + userEntity.getId());
+        if(paymentJson != null) {
+            UserEntity userEntity = userRepository.findByIdInUsers(paymentJson.getUserId());
 
-        OrderEntity orderEntity = orderRepository.findByIdInOrder(paymentJson.getOrderId());
-        System.out.println(orderEntity.getAmount() + ": " + orderEntity.getId());
+            OrderEntity orderEntity = orderRepository.findByIdInOrder(paymentJson.getOrderId());
 
-        PaymentEntity entity = new PaymentEntity();
-        entity.setSum(paymentJson.getSum());
-        entity.setCreatedAt(paymentJson.getCreatedAt());
-        entity.setOrder(orderEntity);
-        entity.setUser(userEntity);
+            PaymentEntity entity = new PaymentEntity();
+            entity.setSum(paymentJson.getSum());
+            entity.setCreatedAt(paymentJson.getCreatedAt());
+            entity.setOrder(orderEntity);
+            entity.setUser(userEntity);
 
-        PaymentEntity paymentEntity = paymentRepository.createPayment(entity);
-        System.out.println(paymentEntity.getUser() + ": " + paymentEntity.getId() + ": " + paymentEntity.getCreatedAt());
+            PaymentEntity paymentEntity = paymentRepository.createPayment(entity);
+            paymentEvent = new PaymentJson(
+                    paymentEntity.getId(), paymentJson.getSum(), paymentJson.getCreatedAt(),
+                    paymentJson.getOrderId(), paymentJson.getUserId()
+            );
 
-        PaymentJson paymentEvent = new PaymentJson(
-//                paymentEntity.getId(),
-//                paymentEntity.getSum(),
-//                paymentEntity.getCreatedAt(),
-//                orderEntity.getId(),
-//                userEntity.getId()
-                paymentEntity.getId(),
-                paymentJson.getSum(),
-                paymentJson.getCreatedAt(),
-                paymentJson.getOrderId(),
-                paymentJson.getUserId()
-        );
-
-        SendResult<String, PaymentJson> result = kafkaTemplate
-                .send("payment-created-event-topic", paymentEvent.getPaymentId().toString(), paymentEvent).get();
-
-        System.out.println("Topic " + result.getRecordMetadata().topic());
-        System.out.println("Partition " + result.getRecordMetadata().partition());
-        System.out.println("Offset " + result.getRecordMetadata().offset());
-        System.out.println("Timestamp " + result.getRecordMetadata().timestamp());
-
-        System.out.println("PaymentId: " + paymentEvent.getPaymentId().toString());
-        return paymentEvent.getPaymentId().toString();
+            SendResult<String, PaymentJson> result = kafkaTemplate
+                    .send("payment-created-event-topic", paymentEvent.getPaymentId().toString(), paymentEvent).get();
+        } else {
+            throw new IllegalArgumentException("PaymentJson is not to by null");
+        }
+        return paymentEvent != null ? paymentEvent.getPaymentId().toString() : "";
     }
 }

@@ -1,46 +1,48 @@
 package micro.qa.microkafka.db.model;
 
+
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
-@Table(name = "payments")
-public class PaymentEntity {
+@Table(name = "users")
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
     private UUID id;
     @Column(nullable = false)
-    private BigDecimal sum;
+    private String username;
+    private String password;
     @Column(name = "created_at")
     private Timestamp createdAt;
-    @OneToOne(fetch = EAGER)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private OrderEntity order;
-    @OneToOne(fetch = EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
 
+    // Геттеры и сеттеры
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public String getUsername() {
+        return username;
     }
 
-    public BigDecimal getSum() {
-        return sum;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setSum(BigDecimal sum) {
-        this.sum = sum;
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Timestamp getCreatedAt() {
@@ -49,22 +51,6 @@ public class PaymentEntity {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = parseDate(createdAt);
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public OrderEntity getOrder() {
-        return order;
-    }
-
-    public void setOrder(OrderEntity order) {
-        this.order = order;
     }
 
     private Timestamp parseDate(String date) {

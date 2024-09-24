@@ -1,10 +1,7 @@
 package micro.qa.microkafka.db.model;
 
 
-import org.apache.kafka.common.protocol.types.Field;
-
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,10 +23,6 @@ public class UserEntity {
     // Геттеры и сеттеры
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getUsername() {

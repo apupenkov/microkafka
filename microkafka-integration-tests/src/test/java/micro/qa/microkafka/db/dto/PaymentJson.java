@@ -1,9 +1,10 @@
-package micro.qa.microkafka.db.model;
+package micro.qa.microkafka.db.dto;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentJson {
+    private UUID paymentId;
     private BigDecimal sum;
     private String createdAt;
     private UUID orderId;
@@ -39,5 +40,13 @@ public class PaymentJson {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public UUID getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(UUID paymentId) {
+        this.paymentId = paymentId;
     }
 }

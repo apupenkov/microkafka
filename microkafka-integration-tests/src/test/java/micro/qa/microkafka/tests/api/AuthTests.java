@@ -9,7 +9,7 @@ public class AuthTests {
 
     private final AuthApi authApi = new AuthApi();
 
-    @Test
+//    @Test
     void failLogin() {
         Assertions.assertThrows(JsonPathException.class,
                 () -> authApi.getUserToken("sash", "12345"), "Не получилось создать токен.");

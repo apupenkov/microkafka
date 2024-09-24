@@ -13,10 +13,8 @@ public class KafkaExtension implements SuiteExtension {
 
     @Override
     public void beforeSuite(ExtensionContext context) {
-        executorService.execute(new KafkaConsumerService());
-        if(!executorService.isShutdown()) {
-            executorService.shutdown();
-        }
+        executorService.execute(kafkaConsumerService);
+        executorService.shutdown();
     }
 
     @Override

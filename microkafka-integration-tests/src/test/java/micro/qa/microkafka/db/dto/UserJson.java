@@ -1,4 +1,4 @@
-package micro.qa.microkafka.db.model;
+package micro.qa.microkafka.db.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -8,6 +8,7 @@ services:
       - 2181:2181
     networks:
       - network
+    dns_search: .
 
   kafka:
     image: confluentinc/cp-kafka:7.7.1
@@ -22,9 +23,10 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - network
+    dns_search: .
 
   microkafka-db:
     container_name: microkafka-db
@@ -55,11 +57,6 @@ services:
       dockerfile: microkafka-payment/Dockerfile
     ports:
       - "9090:9090"
-    healthcheck:
-      test: "wget --spider http://localhost:9090/actuator/health || exit 1"
-      interval: 5s
-      timeout: 5s
-      retries: 10
     restart: always
     depends_on:
       microkafka-db:
@@ -94,6 +91,17 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: payment-created-event
+    networks:
+      - network
+    dns_search: .
+
+  microkafka-tests:
+    build:
+      context: .
+      dockerfile: microkafka-integration-tests/Dockerfile
+    depends_on:
+      microkafka-payment:
+        condition: service_started
     networks:
       - network
     dns_search: .
