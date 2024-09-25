@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -20,9 +22,12 @@ public class OrderEntity {
     private BigDecimal amount;
     @Column(name = "created_at")
     private Timestamp createdAt;
-    @OneToOne(fetch = EAGER)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
+    // OrderEntity является ведущей сущность, поэтому задает правила удаления для PaymentEntity
+    @OneToOne(fetch = EAGER, orphanRemoval = true, cascade = ALL, mappedBy = "order")
+    private PaymentEntity payment;
 
     // Геттеры и сеттеры
     public UUID getId() {

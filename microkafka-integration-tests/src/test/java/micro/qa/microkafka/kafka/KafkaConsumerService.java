@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import static micro.qa.microkafka.utils.PropertyHandler.get;
 
 public class KafkaConsumerService implements Runnable {
 
@@ -30,7 +29,7 @@ public class KafkaConsumerService implements Runnable {
     private final Consumer<String, String> stringConsumer;
 
     static {
-        STR_KAFKA_PROPERTIES.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, get("kafka.address"));
+        STR_KAFKA_PROPERTIES.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, PropertyHandler.get("kafka.address"));
         STR_KAFKA_PROPERTIES.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
         STR_KAFKA_PROPERTIES.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         STR_KAFKA_PROPERTIES.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -38,7 +37,7 @@ public class KafkaConsumerService implements Runnable {
     }
 
     public KafkaConsumerService() {
-        this(List.of(get("kafka.topics")));
+        this(List.of(PropertyHandler.get("kafka.topics")));
     }
 
     public KafkaConsumerService(List<String> stringTopics) {

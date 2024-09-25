@@ -1,20 +1,14 @@
 package micro.qa.microkafka.db.model;
 
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -28,10 +22,10 @@ public class PaymentEntity {
     private BigDecimal sum;
     @Column(name = "created_at")
     private Timestamp createdAt;
-    @OneToOne(fetch = EAGER)
+    @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private OrderEntity order;
-    @OneToOne(fetch = EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 

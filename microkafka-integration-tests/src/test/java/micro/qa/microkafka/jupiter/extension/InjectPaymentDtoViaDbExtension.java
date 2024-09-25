@@ -20,7 +20,9 @@ import static micro.qa.microkafka.utils.GenerateRandomData.getFaker;
 
 public class InjectPaymentDtoViaDbExtension implements BeforeEachCallback, ParameterResolver, AfterEachCallback {
 
-    public static ExtensionContext.Namespace PAYMENT_DTO = ExtensionContext.Namespace.create(InjectPaymentDtoViaDbExtension.class);
+    private static ExtensionContext.Namespace PAYMENT_DTO = ExtensionContext.Namespace.create(InjectPaymentDtoViaDbExtension.class);
+    private UserEntity userEntity;
+    private OrderEntity orderEntity;
     private final UserRepository userRepository = new UserRepositoryImpl();
     private final OrderRepository orderRepository = new OrderRepositoryImpl();
 
@@ -29,8 +31,9 @@ public class InjectPaymentDtoViaDbExtension implements BeforeEachCallback, Param
         InjectPaymentDtoViaDb annotation = extensionContext.getRequiredTestMethod().getAnnotation(InjectPaymentDtoViaDb.class);
 
         if(annotation != null) {
-            UserEntity userEntity = userRepository.create(getFaker().name().firstName(), annotation.password());
-            OrderEntity orderEntity = orderRepository.create(new BigDecimal(annotation.amount()), userEntity);
+            userEntity = userRepository.create(getFaker().name().fullName(), annotation.password());
+            orderEntity = orderRepository.create(new BigDecimal(annotation.amount()), userEntity);
+            userEntity.addOrders(orderEntity);
             String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             PaymentJson paymentJson = new PaymentJson();
             paymentJson.setSum(new BigDecimal(annotation.amount()));
@@ -58,9 +61,10 @@ public class InjectPaymentDtoViaDbExtension implements BeforeEachCallback, Param
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
-        if(extensionContext.getStore(PAYMENT_DTO).get(getTestId(extensionContext), PaymentJson.class) != null) {
-
+    public void afterEach(ExtensionContext extensionContext) {
+        if(userEntity != null) {
+            // Произойдет каскадное удаление платежи -> заказы -> пользователь
+            userRepository.deleteUserById(userEntity);
         }
     }
 }

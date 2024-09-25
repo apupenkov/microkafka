@@ -1,14 +1,15 @@
 package micro.qa.microkafka.db.model;
 
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -24,7 +25,19 @@ public class UserEntity {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    // Геттеры и сеттеры
+    @OneToMany(fetch = EAGER, cascade = ALL, orphanRemoval = true, mappedBy = "user")
+    private Set<OrderEntity> orders = new HashSet<>();
+
+    /* Необходимо для добавления заказа пользователю и связи UserEntity с OrderEntity
+    * Обязательно вызывать при создании заказа.
+     */
+    public void addOrders(OrderEntity... orderEntities) {
+        for (OrderEntity orderEntity : orderEntities){
+            orders.add(orderEntity);
+            orderEntity.setUserId(this);
+        }
+    }
+
     public UUID getId() {
         return id;
     }

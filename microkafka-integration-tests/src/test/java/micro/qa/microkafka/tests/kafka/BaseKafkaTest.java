@@ -16,8 +16,8 @@ public abstract class BaseKafkaTest {
     private static final PaymentRepository paymentRepository = new PaymentRepositoryImpl();
     final static List<UUID> payments = new CopyOnWriteArrayList<>();
 
-    @AfterAll
-    static void cleanTestData() {
-        paymentRepository.removeAllPayments(payments);
-    }
+//    @AfterAll
+//    static void cleanTestData() {
+//        paymentRepository.removeAllPayments(payments);
+//    }
 }

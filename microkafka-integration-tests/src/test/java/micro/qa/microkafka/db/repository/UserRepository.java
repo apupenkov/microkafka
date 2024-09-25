@@ -9,4 +9,6 @@ public interface UserRepository {
     UserEntity findByIdInUsers(UUID userId);
 
     UserEntity create(String userName, String password);
+
+    void deleteUserById(UserEntity user);
 }

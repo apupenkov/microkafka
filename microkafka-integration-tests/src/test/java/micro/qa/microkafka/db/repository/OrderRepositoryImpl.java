@@ -25,4 +25,9 @@ public class OrderRepositoryImpl extends JpaService implements OrderRepository {
         persist(order);
         return order;
     }
+
+    @Override
+    public void deleteOrderById(OrderEntity order) {
+        remove(order);
+    }
 }

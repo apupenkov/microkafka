@@ -28,4 +28,9 @@ public class UserRepositoryImpl extends JpaService implements UserRepository {
         persist(user);
         return user;
     }
+
+    @Override
+    public void deleteUserById(UserEntity user) {
+        removeDetachedEntity(user);
+    }
 }

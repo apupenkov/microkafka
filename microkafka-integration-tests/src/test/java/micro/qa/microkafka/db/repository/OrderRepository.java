@@ -11,4 +11,6 @@ public interface OrderRepository {
     OrderEntity findByIdInOrder(UUID orderId);
 
     OrderEntity create(BigDecimal amount, UserEntity user);
+
+    void deleteOrderById(OrderEntity order);
 }

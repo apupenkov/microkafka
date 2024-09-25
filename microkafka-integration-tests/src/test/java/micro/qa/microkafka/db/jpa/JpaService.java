@@ -52,4 +52,19 @@ public abstract class JpaService {
             throw e;
         }
     }
+
+    public <T> void removeDetachedEntity(T detachedEntity) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            T managedEntity = entityManager.merge(detachedEntity);
+            entityManager.remove(managedEntity);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
 }
